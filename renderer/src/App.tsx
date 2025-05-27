@@ -1,11 +1,23 @@
 import { useState } from "react";
 
 function App() {
-  const [count, setCount] = useState(0);
+  setTimeout(() => {
+    // fetch
+
+  }, 5000)
 
   return (
     <>
-      <div>sdf</div>
+      <div>
+        <div>
+          sdfsd
+        </div>
+        <button onClick={e => {
+          console.log("asdas")
+        }}>
+          CLICK ME
+        </button>
+      </div>
     </>
   );
 }
