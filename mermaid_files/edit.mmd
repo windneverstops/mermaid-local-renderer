@@ -70,6 +70,63 @@ User1 ->> FE1: Draw annotation
   WS -->> API: 200 OK
   API -->> FE2: Connection established
 
+Note right of User2: User 2 authenticated on homepage
+  User2 ->> FE2: User 2 at /workspaces
+  Note right of FE2: Show workspace list
+  User2 ->> FE2: Navigate to /workspace/{workspaceId}
+  FE2 ->> API: GET /api/workspaces/{workspaceId}/images
+  API -->> FE2: 200 OK
+  FE2 -->> User2: At /workspace/{workspaceId}
+  User2 ->> FE2: Click image, open preview modal with active users
+  FE2 ->> API: GET /api/workspaces/{workspaceId}/images/{imageId}
+  API -->> FE2: Image + existing annotations
+  FE2 ->> FE2: Instantiate Yjs document
+  FE2 ->> API: CONNECT ws://.../ws/workspaces/{workspaceId}/images/{imageId}
+  API ->> WS: POST /start_session
+  WS -->> API: CONNECT ws://.../ws/workspaces/{workspaceId}/images/{imageId}
+  API -->> FE2: BROADCAST {active user data}
+  API -->> WS: Connection established
+  WS -->> API: 200 OK
+  API -->> FE2: Connection established
+
+Note right of User2: User 2 authenticated on homepage
+  User2 ->> FE2: User 2 at /workspaces
+  Note right of FE2: Show workspace list
+  User2 ->> FE2: Navigate to /workspace/{workspaceId}
+  FE2 ->> API: GET /api/workspaces/{workspaceId}/images
+  API -->> FE2: 200 OK
+  FE2 -->> User2: At /workspace/{workspaceId}
+  User2 ->> FE2: Click image, open preview modal with active users
+  FE2 ->> API: GET /api/workspaces/{workspaceId}/images/{imageId}
+  API -->> FE2: Image + existing annotations
+  FE2 ->> FE2: Instantiate Yjs document
+  FE2 ->> API: CONNECT ws://.../ws/workspaces/{workspaceId}/images/{imageId}
+  API ->> WS: POST /start_session
+  WS -->> API: CONNECT ws://.../ws/workspaces/{workspaceId}/images/{imageId}
+  API -->> FE2: BROADCAST {active user data}
+  API -->> WS: Connection established
+  WS -->> API: 200 OK
+  API -->> FE2: Connection established
+
+Note right of User2: User 2 authenticated on homepage
+  User2 ->> FE2: User 2 at /workspaces
+  Note right of FE2: Show workspace list
+  User2 ->> FE2: Navigate to /workspace/{workspaceId}
+  FE2 ->> API: GET /api/workspaces/{workspaceId}/images
+  API -->> FE2: 200 OK
+  FE2 -->> User2: At /workspace/{workspaceId}
+  User2 ->> FE2: Click image, open preview modal with active users
+  FE2 ->> API: GET /api/workspaces/{workspaceId}/images/{imageId}
+  API -->> FE2: Image + existing annotations
+  FE2 ->> FE2: Instantiate Yjs document
+  FE2 ->> API: CONNECT ws://.../ws/workspaces/{workspaceId}/images/{imageId}
+  API ->> WS: POST /start_session
+  WS -->> API: CONNECT ws://.../ws/workspaces/{workspaceId}/images/{imageId}
+  API -->> FE2: BROADCAST {active user data}
+  API -->> WS: Connection established
+  WS -->> API: 200 OK
+  API -->> FE2: Connection established
+
   Note right of FE2: (Same presence update mechanism applies.)
 
   User2 ->> FE2: Draw annotation
