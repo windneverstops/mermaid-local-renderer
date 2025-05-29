@@ -31,11 +31,11 @@ function App() {
 
     resizeObserverRef.current = new ResizeObserver(() => {
       if (panZoomRef.current) {
-        panZoomRef.current.resize()
-        panZoomRef.current.fit()
-        panZoomRef.current.center()
+        panZoomRef.current.resize();
+
       }
     })
+
 
     resizeObserverRef.current.observe(svgContainerRef.current)
 
