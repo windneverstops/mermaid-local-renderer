@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./renderer
+    command: npm run start
+    volumes:
+      - ./mermaid_files:/mermaid_files
+    ports:
+      - "3001:3001" # adjust port if needed
+
+  frontend:
+    build: ./ui
+    command: npm run dev
+    ports:
+      - "3000:3000"
