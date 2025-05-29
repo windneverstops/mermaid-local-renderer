@@ -1,0 +1,90 @@
+---
+config:
+  theme: base
+---
+
+sequenceDiagram
+  participant User1 as User 1
+  participant User2 as User 2
+  participant FE1 as Frontend 1
+  participant FE2 as Frontend 2
+  participant API as Backend API
+  participant WS as NodeJS sidecar
+  participant DB as PostgreSQL DB
+  note over DB: Only important DB interactions are shown
+
+  Note right of User1: User 1 authenticated on homepage
+  User1 ->> FE1: User 1 at /workspaces
+  Note right of FE1: Show workspace list
+  User1 ->> FE1: Navigate to /workspace/{workspaceId}
+  FE1 ->> API: GET /api/workspaces/{workspaceId}/images
+  API -->> FE1: 200 OK
+  FE1 -->> User1: At /workspace/{workspaceId}
+  User1 ->> FE1: Click image, open preview modal with active users
+  FE1 ->> API: GET /api/workspaces/{workspaceId}/images/{imageId}
+  API -->> FE1: Image + existing annotations
+  FE1 ->> FE1: Instantiate Yjs document
+  FE1 ->> API: CONNECT ws://.../ws/workspaces/{workspaceId}/images/{imageId}
+  Note right of API: Create the authoritative WebSocket client connection
+  API ->> WS: POST /start_session
+  WS -->> API: CONNECT ws://.../ws/workspaces/{workspaceId}/images/{imageId}
+  API -->> FE1: BROADCAST {active user data}
+  API -->> WS: Connection established
+  WS -->> API: 200 OK
+  API -->> FE1: Connection established
+
+  Note right of FE1: Yjs presence updates (e.g., mouse movements)<br>are sent by clients to API whenever user interaction<br>occurs. API broadcasts presence updates to all<br>connected clients immediately.
+
+  User1 ->> FE1: Draw annotation
+  FE1 ->> API: SEND {annotation data}
+  par Broadcast simultaneously
+    API -->> WS: Forward annotation data
+    API -->> FE1: Broadcast annotation data
+  end
+  FE1 -->> User1: Apply annotation changes
+
+  Note right of User2: User 2 authenticated on homepage
+  User2 ->> FE2: User 2 at /workspaces
+  Note right of FE2: Show workspace list
+  User2 ->> FE2: Navigate to /workspace/{workspaceId}
+  FE2 ->> API: GET /api/workspaces/{workspaceId}/images
+  API -->> FE2: 200 OK
+  FE2 -->> User2: At /workspace/{workspaceId}
+  User2 ->> FE2: Click image, open preview modal with active users
+  FE2 ->> API: GET /api/workspaces/{workspaceId}/images/{imageId}
+  API -->> FE2: Image + existing annotations
+  FE2 ->> FE2: Instantiate Yjs document
+  FE2 ->> API: CONNECT ws://.../ws/workspaces/{workspaceId}/images/{imageId}
+  API ->> WS: POST /start_session
+  WS -->> API: CONNECT ws://.../ws/workspaces/{workspaceId}/images/{imageId}
+  API -->> FE2: BROADCAST {active user data}
+  API -->> WS: Connection established
+  WS -->> API: 200 OK
+  API -->> FE2: Connection established
+
+  Note right of FE2: (Same presence update mechanism applies.)
+
+  User2 ->> FE2: Draw annotation
+  FE2 ->> API: SEND {annotation data}
+  par Broadcast simultaneously
+    API -->> WS: Forward annotation data
+    API -->> FE2: Broadcast annotation data
+  end
+  FE2 -->> User2: Apply annotation changes
+
+  User1 ->> FE1: Exit annotation modal
+  FE1 ->> API: DISCONNECT ws://.../ws/workspaces/{workspaceId}/images/{imageId}
+  API -->> WS: Confirmation of disconnect
+
+  User2 ->> FE2: Exit annotation modal
+  FE2 ->> API: DISCONNECT ws://.../ws/workspaces/{workspaceId}/images/{imageId}
+  API -->> WS: Confirmation of disconnect
+
+  Note over API: If no connected clients remain  
+  API ->> WS: POST /stop_session  
+  WS -->> API: Close WebSocket client connection
+
+  loop Every 5 seconds
+    WS ->> DB: Apply annotation state changes to Image table
+    DB -->> WS: Acknowledge update
+  end
