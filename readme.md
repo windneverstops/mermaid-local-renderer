@@ -6,6 +6,11 @@ The biggest downside here is that you cannot interact with the diagram itself to
 **Goal:**  
 To eventually add a folder picker synced to the `mermaid_files` folder.
 
+TO DOs:
+- Folder picker and navigator
+- Debug information
+- Export feature
+
 **Set Up:**
 Ensure you have docker, and run `docker-compose up --build`. For now, you can only modify edit.mmd. Folder picker to be added.
 If you don't want to use docker because of its egregious ram and storage requirements or overhead, you can run the backend and frontend via node locally. Refer to their respective package.json file for this.
