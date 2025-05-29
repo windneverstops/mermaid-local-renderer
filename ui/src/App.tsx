@@ -2,17 +2,14 @@ import { useEffect, useState } from 'react'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from './components/ui/resizable'
 import { webSocket } from 'rxjs/webSocket'
 import { Subject } from 'rxjs';
+import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 
 interface SvgFile {
-  content: String
+  content: string
 }
 
-
 function App() {
-
-
-
-  const [svg, setSvg] = useState<String>("")
+  const [svg, setSvg] = useState<string>("")
 
   useEffect(() => {
     const socket$ = webSocket<SvgFile>("ws://localhost:2195");
@@ -20,7 +17,7 @@ function App() {
 
       next: (msg: SvgFile) => {
 
-
+        console.log(msg.content)
         setSvg(msg.content)
       },
       error: () => { },
@@ -31,12 +28,18 @@ function App() {
   return (
     <>
       <ResizablePanelGroup direction='horizontal'>
-        <ResizablePanel>
+        <ResizablePanel defaultSize={10}>
           Folder picker - to be implemented
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel>
-          <div dangerouslySetInnerHTML={{ __html: svg }} />
+        <ResizablePanel defaultSize={90}>
+          <div className='h-screen'>
+            <TransformWrapper centerOnInit initialScale={2}>
+              <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>
+                <div dangerouslySetInnerHTML={{ __html: svg }} className='h-full w-full' />
+              </TransformComponent>
+            </TransformWrapper>
+          </div>
         </ResizablePanel>
       </ResizablePanelGroup>
     </>

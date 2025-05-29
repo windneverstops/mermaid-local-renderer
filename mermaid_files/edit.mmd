@@ -42,6 +42,14 @@ sequenceDiagram
     API -->> FE1: Broadcast annotation data
   end
   FE1 -->> User1: Apply annotation changes
+User1 ->> FE1: Draw annotation
+  FE1 ->> API: SEND {annotation data}
+  par Broadcast simultaneously
+    API -->> WS: Forward annotation data
+    API -->> FE1: Broadcast annotation data
+  end
+  FE1 -->> User1: Apply annotation changes
+
 
   Note right of User2: User 2 authenticated on homepage
   User2 ->> FE2: User 2 at /workspaces
